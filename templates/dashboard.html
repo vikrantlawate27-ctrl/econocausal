@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - EconoCausal Dynamic Pricing</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div>
+                <div class="brand-title">EconoCausal</div>
+                <div class="brand-subtitle">Causal AI Pricing</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a href="/admin/dashboard" class="nav-link active">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/products" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-box-open"></i></span>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                    <span>Sales</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/orders" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-cart-flatbed"></i></span>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-brain"></i></span>
+                    <span>Demand Prediction</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+                    <span>Data & Causal Analysis</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-sliders"></i></span>
+                    <span>Pricing Simulator</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span>Dynamic Pricing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/profile" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/logout" class="nav-link" style="color: #f87171;">
+                    <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div><strong>System Status:</strong></div>
+            <div style="color: #4ade80; margin-top:0.25rem;"><i class="fa-solid fa-circle-check"></i> Models Operational</div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1 class="page-title">AI-Powered Economic Intelligence Dashboard</h1>
+                <p class="page-subtitle">Continuous portfolio monitoring, demand dynamics, and causal elasticity telemetry</p>
+            </div>
+            <div class="header-badges">
+                <a href="/simulator" class="btn btn-primary" style="padding: 0.6rem 1.25rem;">
+                    <i class="fa-solid fa-sliders"></i> Launch Pricing Simulator
+                </a>
+            </div>
+        </header>
+
+        <!-- KPI Grid -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Total Catalog Products</span>
+                    <div class="kpi-icon" style="color: var(--primary);"><i class="fa-solid fa-box"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-total-products">--</div>
+                <div class="kpi-subtext">Active product SKUs</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Total Transactions</span>
+                    <div class="kpi-icon" style="color: var(--accent);"><i class="fa-solid fa-database"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-total-records">--</div>
+                <div class="kpi-subtext">Observational sales records</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Average Price</span>
+                    <div class="kpi-icon" style="color: var(--warning);"><i class="fa-solid fa-tag"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-avg-price">--</div>
+                <div class="kpi-subtext">Across all catalog categories</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Average Daily Demand</span>
+                    <div class="kpi-icon" style="color: var(--secondary);"><i class="fa-solid fa-cart-shopping"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-avg-demand">--</div>
+                <div class="kpi-subtext">Units sold per product/day</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Total Portfolio Revenue</span>
+                    <div class="kpi-icon" style="color: #0284c7;"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-revenue">--</div>
+                <div class="kpi-subtext">Gross sales turnover</div>
+            </div>
+
+            <div class="kpi-card" style="border: 2px solid var(--primary);">
+                <div class="kpi-header">
+                    <span class="kpi-label">Causal Price Elasticity (DML)</span>
+                    <div class="kpi-icon" style="background-color: var(--primary-light); color: var(--primary);"><i class="fa-solid fa-robot"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-causal-effect" style="color: var(--primary);">--</div>
+                <div class="kpi-subtext text-positive"><i class="fa-solid fa-shield-halved"></i> Debiased Causal ATE</div>
+            </div>
+        </div>
+
+        <!-- Causal Elasticity Banner -->
+        <div class="alert alert-info">
+            <i class="fa-solid fa-lightbulb" style="font-size: 1.35rem; margin-top: 0.15rem;"></i>
+            <div>
+                <strong>Double Machine Learning Insight:</strong><br>
+                <span id="causal-interpretation">Loading causal elasticity interpretation from EconML...</span>
+            </div>
+        </div>
+
+        <!-- Charts Grid 1 -->
+        <div class="charts-grid-2">
+            <div class="card">
+                <h3 class="card-title">Price vs Demand Distribution</h3>
+                <p class="card-subtitle">Empirical relationship showing downward sloping demand across transaction samples</p>
+                <div class="chart-container">
+                    <canvas id="chart-price-demand"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Average Demand by Category</h3>
+                <p class="card-subtitle">Product demand volume across Electronics, Home & Office, and Wearables</p>
+                <div class="chart-container">
+                    <canvas id="chart-category-demand"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Grid 2 -->
+        <div class="card">
+            <h3 class="card-title">Monthly Demand Trend</h3>
+            <p class="card-subtitle">Seasonality cycle showing holiday sales surges in Q4 and winter cycles</p>
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="chart-monthly-trend"></canvas>
+            </div>
+        </div>
+
+        <!-- Order Fulfillment & Tracking Intelligence Section -->
+        <div style="margin-top: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                    <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--dark);">
+                        <i class="fa-solid fa-cart-flatbed" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                        Order Fulfillment & Status Analytics
+                    </h2>
+                    <p style="color: var(--gray-600); font-size: 0.9rem; margin-top: 0.2rem;">
+                        Real-time order pipeline metrics, dispatch stages, and customer tracking telemetry
+                    </p>
+                </div>
+                <a href="/admin/orders" class="btn btn-primary" style="padding: 0.55rem 1.1rem; font-size: 0.85rem;">
+                    <i class="fa-solid fa-list-check"></i> Manage All Orders
+                </a>
+            </div>
+
+            <!-- Order Statistics Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="card" style="padding: 1.1rem; border-left: 4px solid var(--primary); margin-bottom: 0;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase;">Total Orders</div>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: var(--dark); margin: 0.25rem 0;">{{ order_stats.total if order_stats else 0 }}</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">All customer orders</div>
+                </div>
+
+                <div class="card" style="padding: 1.1rem; border-left: 4px solid #f59e0b; margin-bottom: 0;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase;">Pending</div>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #b45309; margin: 0.25rem 0;">{{ order_stats.pending if order_stats else 0 }}</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">Awaiting action</div>
+                </div>
+
+                <div class="card" style="padding: 1.1rem; border-left: 4px solid #3b82f6; margin-bottom: 0;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase;">Processing</div>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #1d4ed8; margin: 0.25rem 0;">{{ order_stats.processing if order_stats else 0 }}</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">Warehouse packing</div>
+                </div>
+
+                <div class="card" style="padding: 1.1rem; border-left: 4px solid #6366f1; margin-bottom: 0;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase;">Shipped</div>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #4338ca; margin: 0.25rem 0;">{{ order_stats.shipped if order_stats else 0 }}</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">In transit to courier</div>
+                </div>
+
+                <div class="card" style="padding: 1.1rem; border-left: 4px solid #10b981; margin-bottom: 0;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase;">Delivered</div>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #047857; margin: 0.25rem 0;">{{ order_stats.delivered if order_stats else 0 }}</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">Completed handoffs</div>
+                </div>
+
+                <div class="card" style="padding: 1.1rem; border-left: 4px solid #ef4444; margin-bottom: 0;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase;">Cancelled</div>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #b91c1c; margin: 0.25rem 0;">{{ order_stats.cancelled if order_stats else 0 }}</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">Voided transactions</div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Card -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h3 class="card-title" style="margin-bottom: 0.2rem;">Recent Customer Orders</h3>
+                        <p class="card-subtitle" style="margin-bottom: 0;">Latest transactions submitted through the customer store</p>
+                    </div>
+                    <a href="/admin/orders" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                        View All
+                    </a>
+                </div>
+
+                {% if recent_orders and recent_orders|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ro in recent_orders %}
+                            <tr>
+                                <td style="font-family: monospace; font-weight: 700; color: var(--primary);">
+                                    #ORD-{{ ro.id }}
+                                </td>
+                                <td>
+                                    <strong>{{ ro.customer_name }}</strong>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">{{ ro.customer_email }}</div>
+                                </td>
+                                <td style="font-size: 0.85rem; color: var(--gray-600);">
+                                    {{ ro.order_date }}
+                                </td>
+                                <td style="font-family: monospace; font-weight: 700; color: #047857;">
+                                    ₹{{ "{:,.2f}".format(ro.total_amount) }}
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ ro.status|replace(' ', '-') }}">
+                                        {{ ro.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/customer/orders/{{ ro.id }}/track" target="_blank" class="btn btn-outline" style="padding: 0.3rem 0.65rem; font-size: 0.78rem;">
+                                        <i class="fa-solid fa-route"></i> Track
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                    <i class="fa-solid fa-box-open" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+                    <p>No customer orders recorded yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

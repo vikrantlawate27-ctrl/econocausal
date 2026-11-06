@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile - EconoCausal</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Admin Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div>
+                <div class="brand-title">EconoCausal</div>
+                <div class="brand-subtitle">Admin Control Center</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a href="/admin/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/products" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-box-open"></i></span>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                    <span>Sales</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/orders" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-cart-flatbed"></i></span>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-brain"></i></span>
+                    <span>Demand Prediction</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+                    <span>Data & Causal Analysis</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-sliders"></i></span>
+                    <span>Pricing Simulator</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span>Dynamic Pricing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/profile" class="nav-link active">
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/logout" class="nav-link" style="color: #f87171;">
+                    <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div><strong>Identity:</strong></div>
+            <div style="color: #4ade80; margin-top:0.25rem;"><i class="fa-solid fa-shield"></i> {{ user.email if user else 'admin@econocausal.com' }}</div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1 class="page-title">Administrator Profile & Settings</h1>
+                <p class="page-subtitle">Manage administrative credentials, security parameters, and account details</p>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-primary"><i class="fa-solid fa-shield-halved"></i> Role: Administrator</span>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'warning' if category == 'danger' else 'info' }}">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <div>{{ message }}</div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div style="max-width: 600px;">
+            <div class="card">
+                <h3 class="card-title"><i class="fa-solid fa-user-gear" style="color: var(--primary);"></i> Account Details</h3>
+                <p class="card-subtitle">Keep administrator credentials secure</p>
+
+                <form method="POST" action="/admin/profile">
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label class="form-label" for="email">Admin Email (Permanent)</label>
+                        <input type="email" id="email" class="form-control" value="{{ user.email if user else 'admin@econocausal.com' }}" disabled style="background: var(--gray-100); cursor: not-allowed;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label class="form-label" for="name">Display Name</label>
+                        <input type="text" id="name" name="name" class="form-control" value="{{ user.name if user else 'System Administrator' }}" required>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--gray-200); margin: 1.5rem 0; padding-top: 1.25rem;">
+                        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--dark);">Change Password (Optional)</h4>
+                        <p style="font-size: 0.8rem; color: var(--gray-600); margin-bottom: 1rem;">Leave blank if you do not want to change your password.</p>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label class="form-label" for="password">New Password</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="••••••••••••" minlength="6">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label class="form-label" for="confirm_password">Confirm New Password</label>
+                            <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="••••••••••••" minlength="6">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="padding: 0.85rem 1.75rem;">
+                        <i class="fa-solid fa-save"></i> Save Profile Updates
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

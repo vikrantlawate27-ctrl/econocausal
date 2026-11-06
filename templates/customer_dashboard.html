@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - EconoCausal</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="customer-layout">
+
+    <!-- Customer Top Navbar -->
+    <header class="customer-navbar">
+        <a href="/customer/home" class="customer-nav-brand">
+            <div class="brand-icon" style="width: 32px; height: 32px; font-size: 1rem;"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div style="font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em;">EconoCausal</div>
+        </a>
+
+        <ul class="customer-nav-links">
+            <li><a href="/customer/home" class="customer-nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="/products" class="customer-nav-link"><i class="fa-solid fa-store"></i> Products</a></li>
+            <li><a href="/products?category=Electronics" class="customer-nav-link"><i class="fa-solid fa-laptop"></i> Categories</a></li>
+            <li>
+                <a href="/cart" class="customer-nav-link">
+                    <i class="fa-solid fa-cart-shopping"></i> Cart
+                    <span id="nav-cart-badge" class="cart-badge">{{ cart_count }}</span>
+                </a>
+            </li>
+            <li><a href="/customer/orders" class="customer-nav-link"><i class="fa-solid fa-bag-shopping"></i> My Orders</a></li>
+            <li><a href="/customer/profile" class="customer-nav-link active"><i class="fa-solid fa-user"></i> Profile</a></li>
+            <li><a href="/logout" class="customer-nav-link" style="color: #f87171;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        </ul>
+    </header>
+
+    <!-- Main Content -->
+    <main class="customer-main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'warning' if category == 'danger' else 'info' }}">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <div>{{ message }}</div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Welcome Banner -->
+        <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff; padding: 2.25rem; margin-bottom: 2rem;">
+            <div style="max-width: 800px;">
+                <span class="badge badge-secondary" style="margin-bottom: 0.75rem;"><i class="fa-solid fa-shield-check"></i> Customer Account</span>
+                <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">
+                    Welcome, {{ current_user.name if current_user else 'Customer' }}!
+                </h1>
+                <p style="font-size: 1rem; color: #cbd5e1; margin-bottom: 1.5rem; line-height: 1.6;">
+                    Discover premium electronics, home gear, and smart lifestyle products priced with optimal algorithmic value.
+                </p>
+                <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+                    <a href="/products" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
+                        <i class="fa-solid fa-basket-shopping"></i> Shop Now
+                    </a>
+                    <a href="/customer/orders" class="btn btn-outline" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.25); padding: 0.75rem 1.5rem;">
+                        <i class="fa-solid fa-box-archive"></i> My Orders ({{ total_orders }})
+                    </a>
+                    <a href="/customer/profile" class="btn" style="background: #334155; color: #fff; padding: 0.75rem 1.5rem;">
+                        <i class="fa-solid fa-user-pen"></i> My Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Notification Area -->
+        {% if notifications and notifications|length > 0 %}
+        <div class="card" style="background: #f0fdf4; border: 1.5px solid #10b981; margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #065f46;">
+                    <i class="fa-solid fa-bell" style="color: #10b981;"></i> Order Activity Notifications
+                </h3>
+                <span class="badge badge-secondary">{{ notifications|length }} Updates</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                {% for n in notifications %}
+                <a href="/customer/orders/{{ n.order_id }}/track" style="text-decoration: none; color: inherit;">
+                    <div style="background: #ffffff; border: 1px solid #d1fae5; border-radius: var(--radius-sm); padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; transition: transform 0.15s ease;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='none'">
+                        <div>
+                            <span style="font-weight: 700; color: var(--primary);">🔔 Order #{{ n.order_id }}</span>
+                            <span style="margin: 0 0.4rem; color: #94a3b8;">•</span>
+                            <span style="font-weight: 600; color: var(--dark);">{{ n.message }}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 0.78rem; color: var(--gray-600);">{{ n.created_at }}</span>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);"><i class="fa-solid fa-route"></i> Track</span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Featured Products -->
+        <div style="margin-bottom: 2.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                    <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--dark); margin-bottom: 0.2rem;">Featured Products</h2>
+                    <p style="font-size: 0.88rem; color: var(--gray-600); margin: 0;">Top-rated consumer electronics and smart workspace equipment</p>
+                </div>
+                <a href="/products" style="font-size: 0.88rem; font-weight: 600; color: var(--primary); text-decoration: none;">
+                    View All Products <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="products-grid">
+                {% for p in featured_products %}
+                <div class="product-card">
+                    <div class="product-card-img-wrap">
+                        <img src="{{ p.image_url or 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500' }}" alt="{{ p.product_name }}" class="product-card-img">
+                        <span class="product-card-badge">⭐ {{ p.rating or 4.8 }}</span>
+                    </div>
+                    <div class="product-card-body">
+                        <div class="product-card-category">{{ p.category }}</div>
+                        <h3 class="product-card-title">{{ p.product_name }}</h3>
+                        <div class="product-card-rating">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                            <span style="color: var(--gray-600); margin-left: 4px;">({{ p.rating or 4.8 }})</span>
+                        </div>
+                        <div class="product-card-price-row">
+                            <div>
+                                <span class="product-price"><span class="product-price-curr">₹</span>{{ "{:,.2f}".format(p.current_price) }}</span>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="addToCart('{{ p.product_id }}')" style="padding: 0.45rem 0.9rem; font-size: 0.85rem;">
+                                <i class="fa-solid fa-cart-plus"></i> Add
+                            </button>
+                        </div>
+                        <a href="/product/{{ p.product_id }}" class="btn btn-outline btn-sm" style="margin-top: 0.6rem; text-align: center; justify-content: center; font-size: 0.82rem;">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Popular Products -->
+        <div style="margin-bottom: 2.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                    <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--dark); margin-bottom: 0.2rem;">Popular Deals</h2>
+                    <p style="font-size: 0.88rem; color: var(--gray-600); margin: 0;">High demand choices optimized for value and reliability</p>
+                </div>
+            </div>
+
+            <div class="products-grid">
+                {% for p in popular_products %}
+                <div class="product-card">
+                    <div class="product-card-img-wrap">
+                        <img src="{{ p.image_url or 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=500' }}" alt="{{ p.product_name }}" class="product-card-img">
+                        <span class="product-card-badge">In Stock</span>
+                    </div>
+                    <div class="product-card-body">
+                        <div class="product-card-category">{{ p.category }}</div>
+                        <h3 class="product-card-title">{{ p.product_name }}</h3>
+                        <div class="product-card-rating">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <span style="color: var(--gray-600); margin-left: 4px;">({{ p.rating or 4.7 }})</span>
+                        </div>
+                        <div class="product-card-price-row">
+                            <div>
+                                <span class="product-price"><span class="product-price-curr">₹</span>{{ "{:,.2f}".format(p.current_price) }}</span>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="addToCart('{{ p.product_id }}')" style="padding: 0.45rem 0.9rem; font-size: 0.85rem;">
+                                <i class="fa-solid fa-cart-plus"></i> Add
+                            </button>
+                        </div>
+                        <a href="/product/{{ p.product_id }}" class="btn btn-outline btn-sm" style="margin-top: 0.6rem; text-align: center; justify-content: center; font-size: 0.82rem;">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent Customer Orders -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                    <h3 class="card-title" style="margin-bottom: 0.25rem;">My Recent Orders</h3>
+                    <p class="card-subtitle" style="margin-bottom: 0;">Track status and order deliveries</p>
+                </div>
+                <a href="/customer/orders" class="btn btn-outline btn-sm">View All Orders</a>
+            </div>
+
+            {% if recent_orders|length == 0 %}
+            <div style="text-align: center; padding: 2rem 1rem; color: var(--gray-600);">
+                <i class="fa-solid fa-basket-shopping" style="font-size: 2.5rem; color: var(--gray-300); margin-bottom: 0.75rem;"></i>
+                <p>You haven't placed any orders yet.</p>
+                <a href="/products" class="btn btn-primary btn-sm"><i class="fa-solid fa-cart-shopping"></i> Start Shopping</a>
+            </div>
+            {% else %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Items Summary</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in recent_orders %}
+                        <tr>
+                            <td style="font-family: monospace; font-weight: 700; color: var(--primary);">#ORD-{{ o.id }}</td>
+                            <td style="color: var(--gray-600); font-size: 0.85rem;">{{ o.order_date }}</td>
+                            <td>
+                                <div style="font-size: 0.88rem;">
+                                    {% for it in o['items'] %}
+                                    <div>• {{ it.quantity }}x {{ it.product_name }}</div>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td style="font-family: monospace; font-weight: 700; color: #047857;">₹{{ "{:,.2f}".format(o.total_amount) }}</td>
+                            <td>
+                                <span class="status-badge status-{{ o.status|replace(' ', '-') }}">{{ o.status }}</span>
+                            </td>
+                            <td>
+                                <a href="/customer/orders/{{ o.id }}/track" class="btn btn-primary btn-sm" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; text-decoration: none;">
+                                    <i class="fa-solid fa-route"></i> Track Order
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <script>
+        async function addToCart(productId) {
+            try {
+                const res = await fetch("/api/cart/add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ product_id: productId, quantity: 1 })
+                }).then(r => r.json());
+
+                if (res.status === "success") {
+                    const badge = document.getElementById("nav-cart-badge");
+                    if (badge) badge.textContent = res.cart_count;
+                    alert("✅ Item added to your shopping cart!");
+                } else if (res.redirect) {
+                    window.location.href = res.redirect;
+                } else {
+                    alert("Error: " + (res.message || "Failed to add to cart"));
+                }
+            } catch (err) {
+                console.error("Cart error:", err);
+                alert("Failed to connect to cart service.");
+            }
+        }
+    </script>
+</body>
+</html>

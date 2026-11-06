@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order #{{ order.id }} - EconoCausal</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .timeline-container {
+            position: relative;
+            padding: 2rem 1rem 1rem 3rem;
+            margin: 1.5rem 0;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 38px;
+            top: 2rem;
+            bottom: 2rem;
+            width: 3px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+        .timeline-step {
+            position: relative;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+            z-index: 2;
+        }
+        .timeline-step:last-child {
+            margin-bottom: 0;
+        }
+        .timeline-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+            background: #ffffff;
+            border: 3px solid #cbd5e1;
+            color: #94a3b8;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+        .timeline-step.completed .timeline-icon {
+            background: #10b981;
+            border-color: #10b981;
+            color: #ffffff;
+        }
+        .timeline-step.current .timeline-icon {
+            background: #2563eb;
+            border-color: #93c5fd;
+            color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+            animation: pulse 2s infinite;
+        }
+        .timeline-step.cancelled .timeline-icon {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: #ffffff;
+        }
+        .timeline-content {
+            flex: 1;
+        }
+        .timeline-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--dark);
+            margin-bottom: 0.2rem;
+        }
+        .timeline-step.completed .timeline-title {
+            color: #065f46;
+        }
+        .timeline-step.current .timeline-title {
+            color: #1e40af;
+        }
+        .timeline-step.pending .timeline-title {
+            color: #94a3b8;
+        }
+        .timeline-time {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+    </style>
+</head>
+<body class="customer-layout">
+
+    <!-- Top Navbar -->
+    <header class="customer-navbar">
+        <a href="/customer/home" class="customer-nav-brand">
+            <div class="brand-icon" style="width: 32px; height: 32px; font-size: 1rem;"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div style="font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em;">EconoCausal</div>
+        </a>
+
+        <ul class="customer-nav-links">
+            <li><a href="/customer/home" class="customer-nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="/products" class="customer-nav-link"><i class="fa-solid fa-store"></i> Products</a></li>
+            <li><a href="/cart" class="customer-nav-link"><i class="fa-solid fa-cart-shopping"></i> Cart</a></li>
+            <li><a href="/customer/orders" class="customer-nav-link active"><i class="fa-solid fa-bag-shopping"></i> My Orders</a></li>
+            {% if session.get('role') == 'admin' %}
+                <li><a href="/admin/dashboard" class="customer-nav-link" style="color: #38bdf8;"><i class="fa-solid fa-shield-halved"></i> Admin Portal</a></li>
+            {% else %}
+                <li><a href="/customer/profile" class="customer-nav-link"><i class="fa-solid fa-user"></i> Profile</a></li>
+            {% endif %}
+            <li><a href="/logout" class="customer-nav-link" style="color: #f87171;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        </ul>
+    </header>
+
+    <!-- Main Content -->
+    <main class="customer-main" style="max-width: 860px;">
+
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <a href="/customer/orders" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to My Orders
+                </a>
+                <h1 style="font-size: 2rem; font-weight: 800; color: var(--dark); margin: 0.25rem 0 0;">
+                    Tracking Order #{{ order.id }}
+                </h1>
+            </div>
+            <div>
+                <span class="status-badge status-{{ order.status|replace(' ', '-') }}" style="font-size: 0.95rem; padding: 0.45rem 1rem;">
+                    <i class="fa-solid {{ 'fa-clock' if order.status in ('Pending', 'Confirmed') else 'fa-gear' if order.status == 'Processing' else 'fa-truck' if order.status == 'Shipped' else 'fa-motorcycle' if order.status == 'Out for Delivery' else 'fa-circle-check' if order.status == 'Delivered' else 'fa-ban' }}"></i>
+                    {{ order.status }}
+                </span>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'warning' if category == 'danger' else 'info' }}">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <div>{{ message }}</div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Order Summary Card -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem;">
+                <div>
+                    <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--gray-600);">Estimated Delivery</div>
+                    <div style="font-size: 1.15rem; font-weight: 800; color: #059669; margin-top: 0.2rem;">
+                        <i class="fa-solid fa-calendar-check"></i> {{ order.estimated_delivery or 'In 3-5 Business Days' }}
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--gray-600);">Order Placed On</div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: var(--dark); margin-top: 0.2rem;">
+                        {{ order.order_date }}
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--gray-600);">Total Amount</div>
+                    <div style="font-size: 1.15rem; font-weight: 800; color: var(--dark); margin-top: 0.2rem; font-family: monospace;">
+                        ₹{{ "{:,.2f}".format(order.total_amount) }}
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--gray-600);">Payment Method</div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: var(--gray-700); margin-top: 0.2rem;">
+                        {{ order.payment_method or 'Cash on Delivery' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visual Order Timeline Card -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3 class="card-title" style="margin-bottom: 0.5rem; letter-spacing: 0.5px;">
+                <i class="fa-solid fa-route" style="color: var(--primary);"></i> ORDER TIMELINE
+            </h3>
+            <p class="card-subtitle">Real-time delivery progress tracked from fulfillment center to your address</p>
+
+            {% set stages = [
+                ('Placed', 'Order Placed', 'fa-receipt'),
+                ('Confirmed', 'Order Confirmed', 'fa-check'),
+                ('Processing', 'Processing', 'fa-box-archive'),
+                ('Shipped', 'Shipped', 'fa-truck-fast'),
+                ('Out for Delivery', 'Out for Delivery', 'fa-motorcycle'),
+                ('Delivered', 'Delivered', 'fa-house-circle-check')
+            ] %}
+
+            {% set order_status = order.status %}
+
+            {% set status_ranks = {
+                'Pending': 1,
+                'Placed': 1,
+                'Confirmed': 2,
+                'Processing': 3,
+                'Shipped': 4,
+                'Out for Delivery': 5,
+                'Delivered': 6,
+                'Cancelled': -1
+            } %}
+
+            {% set current_rank = status_ranks.get(order_status, 2) %}
+
+            {% if order_status == 'Cancelled' %}
+            <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: var(--radius-md); padding: 1.5rem; text-align: center; margin: 1.5rem 0;">
+                <div style="font-size: 2rem; color: #dc2626; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-xmark"></i></div>
+                <h3 style="color: #991b1b; margin-bottom: 0.25rem;">✕ Order Cancelled</h3>
+                <p style="color: #7f1d1d; margin: 0; font-size: 0.9rem;">This order has been cancelled and is no longer being processed.</p>
+            </div>
+            {% else %}
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+
+                {% for stage_key, stage_label, stage_icon in stages %}
+                    {% set stage_rank = loop.index %}
+                    {% set is_completed = (stage_rank < current_rank) %}
+                    {% set is_current = (stage_rank == current_rank) %}
+                    {% set is_pending = (stage_rank > current_rank) %}
+
+                    <div class="timeline-step {% if is_completed %}completed{% elif is_current %}current{% else %}pending{% endif %}">
+                        <div class="timeline-icon">
+                            {% if is_completed %}
+                                <i class="fa-solid fa-check"></i>
+                            {% elif is_current %}
+                                <i class="fa-solid {{ stage_icon }}"></i>
+                            {% else %}
+                                <span>○</span>
+                            {% endif %}
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">
+                                {% if is_completed %}✓ {% elif is_current %}● {% else %}○ {% endif %}
+                                {{ stage_label }}
+                                {% if is_current %}
+                                    <span class="badge badge-primary" style="font-size: 0.72rem; vertical-align: middle; margin-left: 0.5rem;">Current Status</span>
+                                {% endif %}
+                            </div>
+                            <div class="timeline-time">
+                                {% if is_completed or is_current %}
+                                    {% set matched_hist = namespace(found=false, time='') %}
+                                    {% for h in history %}
+                                        {% if h.status == stage_key or (stage_key == 'Placed' and loop.first) %}
+                                            {% set matched_hist.found = true %}
+                                            {% set matched_hist.time = h.created_at %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if matched_hist.found %}
+                                        <i class="fa-solid fa-clock"></i> {{ matched_hist.time }}
+                                    {% else %}
+                                        <i class="fa-solid fa-circle-check" style="color: #10b981;"></i> Completed
+                                    {% endif %}
+                                {% else %}
+                                    <span style="color: #94a3b8;">Pending next milestone</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Status History Log Card -->
+        {% if history|length > 0 %}
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3 class="card-title" style="margin-bottom: 1rem;">
+                <i class="fa-solid fa-list-ul" style="color: var(--secondary);"></i> Milestone Activity Log
+            </h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Description / Note</th>
+                            <th>Updated By</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for h in history %}
+                        <tr>
+                            <td>
+                                <span class="status-badge status-{{ h.status|replace(' ', '-') }}">{{ h.status }}</span>
+                            </td>
+                            <td>{{ h.message }}</td>
+                            <td><span class="badge badge-dark">{{ h.updated_by }}</span></td>
+                            <td style="font-size: 0.85rem; color: var(--gray-600); white-space: nowrap;">{{ h.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Order Items & Shipping Address Card -->
+        <div class="card">
+            <h3 class="card-title" style="margin-bottom: 1rem;">Order Items & Delivery Address</h3>
+            
+            <div style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.5rem;">
+                <div style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--gray-600);">Shipping Address</div>
+                <div style="font-weight: 600; color: var(--dark); margin-top: 0.25rem;">{{ order.customer_name }}</div>
+                <div style="font-size: 0.9rem; color: var(--gray-700);">{{ order.delivery_address }}</div>
+                <div style="font-size: 0.85rem; color: var(--gray-600); margin-top: 0.25rem;"><i class="fa-solid fa-phone"></i> {{ order.phone }} | <i class="fa-solid fa-envelope"></i> {{ order.customer_email }}</div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th style="text-align: center;">Quantity</th>
+                            <th style="text-align: right;">Price</th>
+                            <th style="text-align: right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for it in order['items'] %}
+                        <tr>
+                            <td><strong>{{ it.product_name }}</strong></td>
+                            <td style="text-align: center;">{{ it.quantity }}</td>
+                            <td style="text-align: right; font-family: monospace;">₹{{ "{:,.2f}".format(it.price) }}</td>
+                            <td style="text-align: right; font-weight: 700; font-family: monospace; color: #047857;">₹{{ "{:,.2f}".format(it.subtotal) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: 800; font-size: 1rem;">Total:</td>
+                            <td style="text-align: right; font-weight: 800; font-size: 1.15rem; color: #047857; font-family: monospace;">₹{{ "{:,.2f}".format(order.total_amount) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                <a href="/customer/orders" class="btn btn-outline"><i class="fa-solid fa-list-check"></i> All Orders</a>
+                <a href="/products" class="btn btn-secondary"><i class="fa-solid fa-store"></i> Continue Shopping</a>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - EconoCausal</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="customer-layout">
+
+    <!-- Top Navbar -->
+    <header class="customer-navbar">
+        <a href="/customer/home" class="customer-nav-brand">
+            <div class="brand-icon" style="width: 32px; height: 32px; font-size: 1rem;"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div style="font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em;">EconoCausal</div>
+        </a>
+
+        <ul class="customer-nav-links">
+            <li><a href="/customer/home" class="customer-nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="/products" class="customer-nav-link"><i class="fa-solid fa-store"></i> Products</a></li>
+            <li>
+                <a href="/cart" class="customer-nav-link">
+                    <i class="fa-solid fa-cart-shopping"></i> Cart
+                    <span class="cart-badge">{{ cart_count }}</span>
+                </a>
+            </li>
+            <li><a href="/customer/orders" class="customer-nav-link"><i class="fa-solid fa-bag-shopping"></i> My Orders</a></li>
+            <li><a href="/customer/profile" class="customer-nav-link"><i class="fa-solid fa-user"></i> {{ current_user.name if current_user else 'Profile' }}</a></li>
+            <li><a href="/logout" class="customer-nav-link" style="color: #f87171;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        </ul>
+    </header>
+
+    <!-- Main Content -->
+    <main class="customer-main">
+
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--dark); margin-bottom: 0.5rem;">
+            Shipping & Order Checkout
+        </h1>
+        <p style="font-size: 0.95rem; color: var(--gray-600); margin-bottom: 2rem;">
+            Provide your delivery coordinates to complete your order
+        </p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'warning' if category == 'danger' else 'info' }}">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <div>{{ message }}</div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 2rem; align-items: start;">
+            
+            <!-- Checkout Form Card -->
+            <div class="card">
+                <h3 class="card-title" style="margin-bottom: 1.25rem;">
+                    <i class="fa-solid fa-truck-ramp-box" style="color: var(--primary);"></i> Shipping Information
+                </h3>
+
+                <form method="POST" action="/checkout">
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label class="form-label" for="name"><i class="fa-solid fa-user"></i> Customer Name</label>
+                        <input type="text" id="name" name="name" class="form-control" value="{{ user.name if user else '' }}" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label class="form-label" for="email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                        <input type="email" id="email" name="email" class="form-control" value="{{ user.email if user else '' }}" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label class="form-label" for="phone"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91 98765 43210" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label class="form-label" for="address"><i class="fa-solid fa-location-dot"></i> Delivery Street Address</label>
+                        <textarea id="address" name="address" class="form-control" rows="3" placeholder="Apartment / Suite, Street Address, Landmark, City, State, PIN Code" required></textarea>
+                    </div>
+
+                    <!-- Payment Method (Cash on Delivery) -->
+                    <div style="border: 2px solid var(--secondary); background: #f0fdf4; border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 2rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <input type="radio" id="cod" name="payment_method" value="Cash on Delivery" checked style="accent-color: var(--secondary); width: 18px; height: 18px;">
+                            <label for="cod" style="font-weight: 700; color: #065f46; cursor: pointer; margin-bottom: 0; font-size: 1rem;">
+                                <i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery (COD)
+                            </label>
+                        </div>
+                        <p style="font-size: 0.85rem; color: #047857; margin: 0.5rem 0 0 1.85rem;">
+                            Pay conveniently in cash or via UPI upon delivery. No upfront payment required.
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary" style="width: 100%; padding: 0.95rem; font-size: 1.1rem; font-weight: 700; justify-content: center;">
+                        <i class="fa-solid fa-circle-check"></i> Place Order (₹{{ "{:,.2f}".format(total) }})
+                    </button>
+                </form>
+            </div>
+
+            <!-- Items Snapshot Card -->
+            <div class="card" style="position: sticky; top: 90px;">
+                <h3 class="card-title" style="margin-bottom: 1rem;">Order Items ({{ items|length }})</h3>
+
+                <div style="max-height: 280px; overflow-y: auto; margin-bottom: 1.25rem; border-bottom: 1px solid var(--gray-200); padding-bottom: 0.75rem;">
+                    {% for it in items %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <img src="{{ it.image_url }}" alt="{{ it.product_name }}" style="width: 40px; height: 40px; border-radius: var(--radius-sm); object-fit: cover;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.88rem; color: var(--dark);">{{ it.product_name }}</div>
+                                <div style="font-size: 0.78rem; color: var(--gray-600);">Qty: {{ it.quantity }} × ₹{{ "{:,.2f}".format(it.current_price) }}</div>
+                            </div>
+                        </div>
+                        <div style="font-weight: 700; font-family: monospace; font-size: 0.92rem;">
+                            ₹{{ "{:,.2f}".format(it.subtotal) }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.92rem;">
+                    <span style="color: var(--gray-700);">Items Total</span>
+                    <span style="font-family: monospace; font-weight: 600;">₹{{ "{:,.2f}".format(total) }}</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.92rem;">
+                    <span style="color: var(--gray-700);">Shipping</span>
+                    <span style="color: #047857; font-weight: 700;">FREE</span>
+                </div>
+
+                <div style="border-top: 2px solid var(--gray-200); padding-top: 1rem; display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-weight: 800; font-size: 1.15rem; color: var(--dark);">Total Payable</span>
+                    <span style="font-weight: 800; font-size: 1.5rem; color: #047857; font-family: monospace;">₹{{ "{:,.2f}".format(total) }}</span>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - EconoCausal</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="background: radial-gradient(circle at top right, #1e293b, #0f172a 80%); min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 1.5rem;">
+
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-header-icon">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h2>Admin Portal</h2>
+            <p>EconoCausal Business & Dynamic Pricing System</p>
+        </div>
+
+        <div class="auth-body">
+            {% if error %}
+            <div class="alert alert-warning" style="background: #fee2e2; border-left: 4px solid var(--danger); color: #991b1b; padding: 0.75rem 1rem; margin-bottom: 1.25rem;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>{{ error }}</div>
+            </div>
+            {% endif %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'warning' }}" style="padding: 0.75rem 1rem; margin-bottom: 1.25rem;">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/admin/login">
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label class="form-label" for="email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="admin@econocausal.com" required autofocus value="admin@econocausal.com">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label" for="password"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••••••" required value="Admin@123">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem; justify-content: center;">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login as Admin
+                </button>
+            </form>
+
+            <div style="margin-top: 1.5rem; padding: 0.85rem; background: var(--gray-100); border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--gray-700);">
+                <div style="font-weight: 700; margin-bottom: 0.25rem;"><i class="fa-solid fa-key" style="color: var(--primary);"></i> Pre-seeded Admin Credentials:</div>
+                <div>Email: <code style="font-weight: 600; color: #0f172a;">admin@econocausal.com</code></div>
+                <div>Password: <code style="font-weight: 600; color: #0f172a;">Admin@123</code></div>
+            </div>
+        </div>
+
+        <div class="auth-footer" style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="/"><i class="fa-solid fa-arrow-left"></i> Home</a>
+            <a href="/login"><i class="fa-solid fa-user"></i> Customer Login</a>
+        </div>
+    </div>
+
+</body>
+</html>

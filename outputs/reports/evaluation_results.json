@@ -1,0 +1,51 @@
+{
+  "internship_details": {
+    "company": "Infotact Solutions",
+    "intern_name": "Vikrant Bharat Lawate",
+    "role": "Data Associate L1. Intern",
+    "ref_no": "ITS/DSML/1090",
+    "project_name": "EconoCausal: Dynamic Pricing via Double Machine Learning"
+  },
+  "ground_truth_ate": -1.8695332297399323,
+  "naive_bivariate_elasticity": -0.44650070140378223,
+  "naive_multivariate_elasticity": -1.6878402481352746,
+  "dml_estimated_ate": -1.8003996492719867,
+  "dml_confidence_interval": [
+    -1.8472892459879473,
+    -1.753510052556026
+  ],
+  "policy_comparison": {
+    "Historical Baseline": {
+      "avg_price": 92.84145333333333,
+      "total_demand": 459570.29,
+      "total_revenue": 42067097.0934,
+      "total_profit": 21414673.3741,
+      "profit_margin_pct": 50.905992696747774,
+      "profit_uplift_pct": 0.0
+    },
+    "Fixed Price ($75)": {
+      "avg_price": 75.0,
+      "total_demand": 651019.707812,
+      "total_revenue": 48826478.0859,
+      "total_profit": 19474839.74772702,
+      "profit_margin_pct": 39.88581710412351,
+      "profit_uplift_pct": -9.058432003539743
+    },
+    "Naive ML Pricing": {
+      "avg_price": 91.47320333333333,
+      "total_demand": 480211.929461,
+      "total_revenue": 44468371.34236341,
+      "total_profit": 22844713.306125984,
+      "profit_margin_pct": 51.372948044900966,
+      "profit_uplift_pct": 6.6778507757001195
+    },
+    "EconoCausal (DML)": {
+      "avg_price": 92.98643000000001,
+      "total_demand": 489127.299277,
+      "total_revenue": 45543386.61703717,
+      "total_profit": 23524506.29322211,
+      "profit_margin_pct": 51.652957851013014,
+      "profit_uplift_pct": 9.852276905020885
+    }
+  }
+}

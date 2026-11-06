@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Simulator - EconoCausal Dynamic Pricing</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div>
+                <div class="brand-title">EconoCausal</div>
+                <div class="brand-subtitle">Causal AI Pricing</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a href="/admin/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/products" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-box-open"></i></span>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                    <span>Sales</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/orders" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-cart-flatbed"></i></span>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-brain"></i></span>
+                    <span>Demand Prediction</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+                    <span>Data & Causal Analysis</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link active">
+                    <span class="nav-icon"><i class="fa-solid fa-sliders"></i></span>
+                    <span>Pricing Simulator</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span>Dynamic Pricing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/profile" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/logout" class="nav-link" style="color: #f87171;">
+                    <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1 class="page-title">Real-Time Dynamic Pricing Simulator</h1>
+                <p class="page-subtitle">Interactive microeconomic optimizer balancing elasticity, competitor pricing, and profit</p>
+            </div>
+        </header>
+
+        <!-- Simulation Input Form -->
+        <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-sliders" style="color:var(--primary); margin-right:0.5rem;"></i> Configure Product & Market Scenario</h3>
+            <p class="card-subtitle">Select a product SKU and specify current market conditions to compute optimal prices</p>
+
+            <form id="simulator-form">
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label" for="sim-product-select">Select Product SKU</label>
+                        <select id="sim-product-select" class="form-control">
+                            <option value="PROD_001">Pro Wireless Headphones (Electronics)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="sim-current-price">Current Price (₹)</label>
+                        <input type="number" id="sim-current-price" class="form-control" value="2499.0" step="1.0" min="10" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="sim-cost">Unit Marginal Cost (₹)</label>
+                        <input type="number" id="sim-cost" class="form-control" value="1350.0" step="1.0" min="5" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="sim-competitor-price">Competitor Price (₹)</label>
+                        <input type="number" id="sim-competitor-price" class="form-control" value="2580.0" step="1.0" min="10" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="sim-promotion">Promotional Campaign</label>
+                        <select id="sim-promotion" class="form-control">
+                            <option value="0">No Promotion (Regular)</option>
+                            <option value="1">Active Promotion Campaign</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="sim-holiday">Holiday / Event</label>
+                        <select id="sim-holiday" class="form-control">
+                            <option value="0">Regular Day</option>
+                            <option value="1">Holiday / Festival Surge</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="sim-inventory">Stock Inventory Available</label>
+                        <input type="number" id="sim-inventory" class="form-control" value="160" min="1" max="1000">
+                    </div>
+                </div>
+
+                <button type="submit" id="sim-submit-btn" class="btn btn-primary" style="padding: 0.85rem 2rem; font-size: 1rem;">
+                    <i class="fa-solid fa-calculator"></i> Calculate Optimal Price
+                </button>
+            </form>
+        </div>
+
+        <!-- Simulation Results Readout -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Current Catalog Price</span>
+                    <div class="kpi-icon" style="color:var(--gray-600);"><i class="fa-solid fa-tag"></i></div>
+                </div>
+                <div class="kpi-value" id="res-current-price">₹--</div>
+                <div class="kpi-subtext">Baseline anchor price</div>
+            </div>
+
+            <div class="kpi-card" style="border: 2px solid var(--secondary); background: #f0fdf4;">
+                <div class="kpi-header">
+                    <span class="kpi-label">Recommended Price</span>
+                    <div class="kpi-icon" style="background-color: var(--secondary-light); color: var(--secondary-dark);"><i class="fa-solid fa-star"></i></div>
+                </div>
+                <div class="kpi-value" id="res-recommended-price" style="color: var(--secondary-dark);">₹--</div>
+                <div class="kpi-subtext text-positive" id="res-profit-uplift">+0.0% Profit Uplift</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Expected Daily Demand</span>
+                    <div class="kpi-icon" style="color:var(--primary);"><i class="fa-solid fa-boxes-stacked"></i></div>
+                </div>
+                <div class="kpi-value" id="res-expected-demand">-- units</div>
+                <div class="kpi-subtext">Projected sales volume</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Expected Daily Revenue</span>
+                    <div class="kpi-icon" style="color:#0284c7;"><i class="fa-solid fa-chart-column"></i></div>
+                </div>
+                <div class="kpi-value" id="res-expected-revenue">₹--</div>
+                <div class="kpi-subtext">Optimal Price × Demand</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Expected Gross Profit</span>
+                    <div class="kpi-icon" style="color:var(--secondary);"><i class="fa-solid fa-coins"></i></div>
+                </div>
+                <div class="kpi-value" id="res-expected-profit">₹--</div>
+                <div class="kpi-subtext">(Price - Cost) × Demand</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Causal Elasticity θ</span>
+                    <div class="kpi-icon" style="color:var(--accent);"><i class="fa-solid fa-scale-balanced"></i></div>
+                </div>
+                <div class="kpi-value" id="res-causal-elasticity" style="font-size: 1.3rem;">--</div>
+                <div class="kpi-subtext">Max Revenue Price: <strong id="res-revenue-opt-price" style="color:var(--primary);">₹--</strong></div>
+            </div>
+        </div>
+
+        <!-- Dynamic Price Approval Action Box -->
+        <div class="card" id="apply-price-box" style="display: none; background: #f0fdf4; border: 1.5px solid var(--secondary); margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h3 style="color: #065f46; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem;">
+                        <i class="fa-solid fa-circle-check" style="color: var(--secondary);"></i> Dynamic Pricing Action Available
+                    </h3>
+                    <p style="color: #047857; font-size: 0.9rem; margin: 0;">
+                        Approve the AI recommended price to synchronize the live customer store catalog immediately.
+                    </p>
+                </div>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <button type="button" id="btn-approve-price" class="btn btn-secondary" style="padding: 0.75rem 1.5rem; font-size: 0.95rem; font-weight: 700;">
+                        <i class="fa-solid fa-tag"></i> Approve & Apply Price to Store (<span id="btn-approve-price-val">₹0</span>)
+                    </button>
+                    <span id="price-applied-status" style="display: none; font-weight: 700; color: #047857;"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profit & Revenue Response Curve Chart -->
+        <div class="card">
+            <h3 class="card-title">Profit & Revenue Optimization Curve</h3>
+            <p class="card-subtitle">Evaluating candidate price trade-offs across marginal cost and expected demand</p>
+            <div class="chart-container" style="height: 340px;">
+                <canvas id="chart-simulator-curve"></canvas>
+            </div>
+        </div>
+
+        <!-- Candidate Comparison Table -->
+        <div class="card">
+            <h3 class="card-title">Candidate Price Evaluation Grid</h3>
+            <p class="card-subtitle">Granular comparison of candidate prices around the current price with optimal recommendation highlighted</p>
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Candidate Price (₹)</th>
+                            <th>Projected Demand</th>
+                            <th>Expected Revenue</th>
+                            <th>Expected Gross Profit</th>
+                            <th>Profit Margin (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="candidate-table-body">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--gray-600); padding: 2rem;">
+                                Click "Calculate Optimal Price" to generate pricing candidates.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management - EconoCausal Admin</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Admin Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div>
+                <div class="brand-title">EconoCausal</div>
+                <div class="brand-subtitle">Admin Control Center</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a href="/admin/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/products" class="nav-link active">
+                    <span class="nav-icon"><i class="fa-solid fa-box-open"></i></span>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                    <span>Sales</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/orders" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-cart-flatbed"></i></span>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-brain"></i></span>
+                    <span>Demand Prediction</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+                    <span>Data & Causal Analysis</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-sliders"></i></span>
+                    <span>Pricing Simulator</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span>Dynamic Pricing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/profile" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/logout" class="nav-link" style="color: #f87171;">
+                    <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div><strong>Active Role:</strong></div>
+            <div style="color: #4ade80; margin-top:0.25rem;"><i class="fa-solid fa-shield-check"></i> System Admin</div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1 class="page-title">Catalog & Inventory Management</h1>
+                <p class="page-subtitle">Configure cost structure, inventory levels, competitor price anchors, and live selling prices</p>
+            </div>
+            <div class="header-badges">
+                <button type="button" class="btn btn-primary" onclick="toggleAddModal()">
+                    <i class="fa-solid fa-plus"></i> Add New Product
+                </button>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'warning' if category == 'danger' else 'info' }}">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <div>{{ message }}</div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Add Product Modal / Collapsible Form -->
+        <div id="add-product-panel" class="card" style="display: none; background: #ffffff; border: 2px solid var(--primary); margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h3 class="card-title" style="margin-bottom: 0;"><i class="fa-solid fa-box-open" style="color: var(--primary);"></i> Add Product to Catalog</h3>
+                <button type="button" class="btn btn-outline" style="padding: 0.25rem 0.6rem;" onclick="toggleAddModal()">✕ Close</button>
+            </div>
+            
+            <form method="POST" action="/admin/products">
+                <div class="simulator-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="form-group">
+                        <label class="form-label" for="product_id">Product ID</label>
+                        <input type="text" id="product_id" name="product_id" class="form-control" placeholder="PROD_007" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="product_name">Product Name</label>
+                        <input type="text" id="product_name" name="product_name" class="form-control" placeholder="Smart Watch Series 2" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="category">Category</label>
+                        <select id="category" name="category" class="form-select">
+                            <option value="Electronics">Electronics</option>
+                            <option value="Home & Office">Home & Office</option>
+                            <option value="Wearables">Wearables</option>
+                            <option value="Accessories">Accessories</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="cost">Unit Cost (₹)</label>
+                        <input type="number" id="cost" name="cost" class="form-control" step="0.01" min="1" placeholder="1200.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="current_price">Current Price (₹)</label>
+                        <input type="number" id="current_price" name="current_price" class="form-control" step="0.01" min="1" placeholder="2499.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="stock">Inventory Stock</label>
+                        <input type="number" id="stock" name="stock" class="form-control" min="0" value="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="competitor_price">Competitor Price (₹)</label>
+                        <input type="number" id="competitor_price" name="competitor_price" class="form-control" step="0.01" placeholder="2599.00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="promotion">Promotion Active?</label>
+                        <select id="promotion" name="promotion" class="form-select">
+                            <option value="0">No Promotion</option>
+                            <option value="1">Promotion Active (Flag = 1)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label" for="description">Product Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="2" placeholder="Brief technical and value summary for customer store..."></textarea>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label" for="image_url">Image URL</label>
+                    <input type="url" id="image_url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/photo-...">
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save Product</button>
+                    <button type="button" class="btn btn-outline" onclick="toggleAddModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Products Table -->
+        <div class="card">
+            <h3 class="card-title">Live Product Catalog ({{ products|length }} Items)</h3>
+            <p class="card-subtitle">Manage pricing tiers, marginal costs, inventory limits, and promotional flags</p>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>ID & Name</th>
+                            <th>Category</th>
+                            <th>Unit Cost</th>
+                            <th>Current Price</th>
+                            <th>Inventory</th>
+                            <th>Competitor Price</th>
+                            <th>Promotion</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in products %}
+                        <tr>
+                            <td style="width: 50px;">
+                                <img src="{{ p.image_url or 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100' }}" alt="{{ p.product_name }}" style="width: 44px; height: 44px; border-radius: var(--radius-sm); object-fit: cover;">
+                            </td>
+                            <td>
+                                <strong style="color: var(--dark);">{{ p.product_name }}</strong>
+                                <div style="font-size: 0.75rem; color: var(--gray-600); font-family: monospace;">{{ p.product_id }}</div>
+                            </td>
+                            <td><span class="badge badge-dark">{{ p.category }}</span></td>
+                            <td style="font-family: monospace;">₹{{ "{:,.2f}".format(p.cost) }}</td>
+                            <td>
+                                <strong style="font-size: 1rem; color: #047857; font-family: monospace;">₹{{ "{:,.2f}".format(p.current_price) }}</strong>
+                            </td>
+                            <td>
+                                {% if p.stock > 20 %}
+                                    <span class="badge badge-secondary">{{ p.stock }} units</span>
+                                {% else %}
+                                    <span class="badge badge-warning" style="background:#fee2e2; color:#991b1b;">{{ p.stock }} Low</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-family: monospace; color: var(--gray-600);">
+                                ₹{{ "{:,.2f}".format(p.competitor_price or (p.current_price * 1.03)) }}
+                            </td>
+                            <td>
+                                {% if p.promotion == 1 %}
+                                    <span class="badge badge-primary"><i class="fa-solid fa-fire"></i> Active</span>
+                                {% else %}
+                                    <span class="badge" style="background:var(--gray-200); color:var(--gray-700);">None</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.4rem;">
+                                    <!-- Quick Price Update Button / Modal -->
+                                    <button class="btn btn-outline" style="padding: 0.35rem 0.6rem; font-size: 0.8rem;" onclick="openEditModal('{{ p.product_id }}', '{{ p.product_name|escape }}', '{{ p.category }}', '{{ p.cost }}', '{{ p.current_price }}', '{{ p.stock }}', '{{ p.competitor_price }}', '{{ p.promotion }}', '{{ p.description|escape }}', '{{ p.image_url|escape }}')">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </button>
+                                    <form method="POST" action="/admin/products/delete/{{ p.product_id }}" onsubmit="return confirm('Are you sure you want to delete {{ p.product_name }}?');" style="display: inline;">
+                                        <button type="submit" class="btn" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Edit Product Modal -->
+        <div id="edit-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 1.5rem;">
+            <div class="card" style="width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <h3 class="card-title" id="edit-title" style="margin-bottom: 0;">Edit Product</h3>
+                    <button type="button" class="btn btn-outline" style="padding: 0.25rem 0.6rem;" onclick="closeEditModal()">✕</button>
+                </div>
+
+                <form id="edit-form" method="POST" action="">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="edit-name">Product Name</label>
+                            <input type="text" id="edit-name" name="product_name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-category">Category</label>
+                            <select id="edit-category" name="category" class="form-select">
+                                <option value="Electronics">Electronics</option>
+                                <option value="Home & Office">Home & Office</option>
+                                <option value="Wearables">Wearables</option>
+                                <option value="Accessories">Accessories</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-cost">Unit Cost (₹)</label>
+                            <input type="number" id="edit-cost" name="cost" class="form-control" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-price">Current Selling Price (₹)</label>
+                            <input type="number" id="edit-price" name="current_price" class="form-control" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-stock">Inventory Stock</label>
+                            <input type="number" id="edit-stock" name="stock" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-comp-p">Competitor Price (₹)</label>
+                            <input type="number" id="edit-comp-p" name="competitor_price" class="form-control" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label class="form-label" for="edit-promotion">Promotion Flag</label>
+                        <select id="edit-promotion" name="promotion" class="form-select">
+                            <option value="0">No Promotion (0)</option>
+                            <option value="1">Promotion Active (1)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label class="form-label" for="edit-desc">Description</label>
+                        <textarea id="edit-desc" name="description" class="form-control" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label class="form-label" for="edit-img">Image URL</label>
+                        <input type="url" id="edit-img" name="image_url" class="form-control">
+                    </div>
+
+                    <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save Changes</button>
+                        <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function toggleAddModal() {
+            const panel = document.getElementById("add-product-panel");
+            panel.style.display = panel.style.display === "none" ? "block" : "none";
+            if (panel.style.display === "block") panel.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openEditModal(pid, pname, cat, cost, price, stock, compP, promo, desc, img) {
+            document.getElementById("edit-title").textContent = `Edit ${pname} (${pid})`;
+            document.getElementById("edit-form").action = `/admin/products/edit/${pid}`;
+            document.getElementById("edit-name").value = pname;
+            document.getElementById("edit-category").value = cat;
+            document.getElementById("edit-cost").value = cost;
+            document.getElementById("edit-price").value = price;
+            document.getElementById("edit-stock").value = stock;
+            document.getElementById("edit-comp-p").value = compP;
+            document.getElementById("edit-promotion").value = promo;
+            document.getElementById("edit-desc").value = desc;
+            document.getElementById("edit-img").value = img;
+            const modal = document.getElementById("edit-modal");
+            modal.style.display = "flex";
+        }
+
+        function closeEditModal() {
+            document.getElementById("edit-modal").style.display = "none";
+        }
+    </script>
+</body>
+</html>

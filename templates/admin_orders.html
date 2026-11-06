@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Orders Management - EconoCausal Admin</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Admin Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div>
+                <div class="brand-title">EconoCausal</div>
+                <div class="brand-subtitle">Admin Control Center</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a href="/admin/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/products" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-box-open"></i></span>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                    <span>Sales</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/orders" class="nav-link active">
+                    <span class="nav-icon"><i class="fa-solid fa-cart-flatbed"></i></span>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-brain"></i></span>
+                    <span>Demand Prediction</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+                    <span>Data & Causal Analysis</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-sliders"></i></span>
+                    <span>Pricing Simulator</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span>Dynamic Pricing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/profile" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/logout" class="nav-link" style="color: #f87171;">
+                    <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div><strong>Fulfillment Engine:</strong></div>
+            <div style="color: #4ade80; margin-top:0.25rem;"><i class="fa-solid fa-truck-fast"></i> Active Orders</div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1 class="page-title">Customer Order Fulfillment & Status</h1>
+                <p class="page-subtitle">Manage customer e-commerce orders, delivery information, and tracking transitions</p>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-primary"><i class="fa-solid fa-boxes-packing"></i> {{ orders|length }} Total Orders</span>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'warning' if category == 'danger' else 'info' }}">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <div>{{ message }}</div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <h3 class="card-title">All Customer Orders</h3>
+            <p class="card-subtitle">Real-time orders submitted through customer checkout with live price snapshots</p>
+
+            {% if orders|length == 0 %}
+            <div style="text-align: center; padding: 3rem 1rem; color: var(--gray-600);">
+                <i class="fa-solid fa-box-open" style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
+                <h4>No Orders Placed Yet</h4>
+                <p>Customer orders placed through the e-commerce store will appear here in real time.</p>
+                <a href="/products" class="btn btn-outline" style="margin-top: 1rem;"><i class="fa-solid fa-store"></i> Browse Customer Store</a>
+            </div>
+            {% else %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Customer Email</th>
+                            <th>Order Date</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Current Status</th>
+                            <th>Actions & Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in orders %}
+                        <tr>
+                            <td style="font-family: monospace; font-weight: 700; color: var(--primary);">
+                                #ORD-{{ o.id }}
+                            </td>
+                            <td>
+                                <strong>{{ o.customer_name }}</strong>
+                                <div style="font-size: 0.75rem; color: var(--gray-600);"><i class="fa-solid fa-phone"></i> {{ o.phone }}</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-600);"><i class="fa-solid fa-location-dot"></i> {{ o.delivery_address }}</div>
+                            </td>
+                            <td style="font-size: 0.82rem; color: var(--gray-700);">
+                                {{ o.customer_email }}
+                            </td>
+                            <td style="font-size: 0.85rem; color: var(--gray-600); white-space: nowrap;">
+                                {{ o.order_date }}
+                            </td>
+                            <td style="font-family: monospace; font-weight: 700; font-size: 0.95rem; color: #047857;">
+                                ₹{{ "{:,.2f}".format(o.total_amount) }}
+                            </td>
+                            <td style="font-size: 0.85rem;">
+                                <span class="badge" style="background: var(--gray-100); color: var(--gray-800); border: 1px solid var(--gray-300);">
+                                    <i class="fa-solid fa-credit-card"></i> {{ o.payment_method }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status-badge status-{{ o.status|replace(' ', '-') }}">
+                                    <i class="fa-solid {{ 'fa-clock' if o.status == 'Pending' else 'fa-check' if o.status == 'Confirmed' else 'fa-gears' if o.status == 'Processing' else 'fa-truck' if o.status == 'Shipped' else 'fa-person-biking' if o.status == 'Out for Delivery' else 'fa-circle-check' if o.status == 'Delivered' else 'fa-ban' }}"></i>
+                                    {{ o.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                                    <form method="POST" action="/admin/orders/update-status" style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
+                                        <input type="hidden" name="order_id" value="{{ o.id }}">
+                                        <select name="status" class="form-select" style="padding: 0.35rem 0.5rem; font-size: 0.8rem; width: auto; min-width: 130px;">
+                                            <option value="Pending" {% if o.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                            <option value="Confirmed" {% if o.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                                            <option value="Processing" {% if o.status == 'Processing' %}selected{% endif %}>Processing</option>
+                                            <option value="Shipped" {% if o.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                                            <option value="Out for Delivery" {% if o.status == 'Out for Delivery' %}selected{% endif %}>Out for Delivery</option>
+                                            <option value="Delivered" {% if o.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                            <option value="Cancelled" {% if o.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-outline" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; white-space: nowrap;">
+                                            <i class="fa-solid fa-arrows-rotate"></i> Update Order
+                                        </button>
+                                    </form>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <a href="/customer/orders/{{ o.id }}/track" target="_blank" class="btn btn-sm btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; color: var(--primary); text-decoration: none;">
+                                            <i class="fa-solid fa-route"></i> Live Tracking
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+
+    </main>
+
+</body>
+</html>

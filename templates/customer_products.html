@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Products - EconoCausal Store</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="customer-layout">
+
+    <!-- Top Navbar -->
+    <header class="customer-navbar">
+        <a href="/customer/home" class="customer-nav-brand">
+            <div class="brand-icon" style="width: 32px; height: 32px; font-size: 1rem;"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div style="font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em;">EconoCausal</div>
+        </a>
+
+        <ul class="customer-nav-links">
+            <li><a href="/customer/home" class="customer-nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="/products" class="customer-nav-link active"><i class="fa-solid fa-store"></i> Products</a></li>
+            <li><a href="/products?category=Electronics" class="customer-nav-link"><i class="fa-solid fa-laptop"></i> Categories</a></li>
+            <li>
+                <a href="/cart" class="customer-nav-link">
+                    <i class="fa-solid fa-cart-shopping"></i> Cart
+                    <span id="nav-cart-badge" class="cart-badge">{{ cart_count }}</span>
+                </a>
+            </li>
+            {% if current_user %}
+                <li><a href="/customer/orders" class="customer-nav-link"><i class="fa-solid fa-bag-shopping"></i> My Orders</a></li>
+                <li><a href="/customer/profile" class="customer-nav-link"><i class="fa-solid fa-user"></i> {{ current_user.name }}</a></li>
+                <li><a href="/logout" class="customer-nav-link" style="color: #f87171;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            {% else %}
+                <li><a href="/login" class="customer-nav-link"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a></li>
+                <li><a href="/register" class="btn btn-secondary btn-sm" style="padding: 0.35rem 0.8rem; font-size: 0.82rem;">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </header>
+
+    <!-- Main Content -->
+    <main class="customer-main">
+
+        <!-- Search & Filter Controls -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <form method="GET" action="/products" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+                <div style="flex: 2; min-width: 240px;">
+                    <label class="form-label" for="search"><i class="fa-solid fa-magnifying-glass"></i> Search Products</label>
+                    <input type="text" id="search" name="search" class="form-control" placeholder="Search by product name or keyword..." value="{{ search_query }}">
+                </div>
+
+                <div style="flex: 1; min-width: 180px;">
+                    <label class="form-label" for="category"><i class="fa-solid fa-layer-group"></i> Category</label>
+                    <select id="category" name="category" class="form-select">
+                        <option value="all" {% if selected_category == 'all' or not selected_category %}selected{% endif %}>All Categories</option>
+                        <option value="Electronics" {% if selected_category == 'Electronics' %}selected{% endif %}>Electronics</option>
+                        <option value="Home & Office" {% if selected_category == 'Home & Office' %}selected{% endif %}>Home & Office</option>
+                        <option value="Wearables" {% if selected_category == 'Wearables' %}selected{% endif %}>Wearables</option>
+                    </select>
+                </div>
+
+                <div style="flex: 1; min-width: 180px;">
+                    <label class="form-label" for="sort_by"><i class="fa-solid fa-arrow-down-wide-short"></i> Sort By</label>
+                    <select id="sort_by" name="sort_by" class="form-select">
+                        <option value="" {% if not sort_by %}selected{% endif %}>Recommended</option>
+                        <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="rating_desc" {% if sort_by == 'rating_desc' %}selected{% endif %}>Highest Rated</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.25rem;">
+                        <i class="fa-solid fa-filter"></i> Apply Filters
+                    </button>
+                    {% if search_query or (selected_category and selected_category != 'all') or sort_by %}
+                    <a href="/products" class="btn btn-outline" style="padding: 0.65rem 1rem;">Reset</a>
+                    {% endif %}
+                </div>
+            </form>
+
+            <!-- Category Filter Pills -->
+            <div class="filter-pills" style="margin-top: 1.25rem; margin-bottom: 0;">
+                <a href="/products" class="filter-pill {% if selected_category == 'all' or not selected_category %}active{% endif %}">All</a>
+                <a href="/products?category=Electronics" class="filter-pill {% if selected_category == 'Electronics' %}active{% endif %}">Electronics</a>
+                <a href="/products?category=Home+%26+Office" class="filter-pill {% if selected_category == 'Home & Office' %}active{% endif %}">Home & Office</a>
+                <a href="/products?category=Wearables" class="filter-pill {% if selected_category == 'Wearables' %}active{% endif %}">Wearables</a>
+            </div>
+        </div>
+
+        <!-- Product Grid Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--dark); margin: 0;">
+                Products Catalog ({{ products|length }} items)
+            </h2>
+            <div style="font-size: 0.85rem; color: var(--gray-600);">
+                <i class="fa-solid fa-circle-check" style="color: var(--secondary);"></i> Live Real-Time Pricing
+            </div>
+        </div>
+
+        <!-- Product Cards Grid -->
+        {% if products|length == 0 %}
+        <div class="card" style="text-align: center; padding: 3rem 1rem; color: var(--gray-600);">
+            <i class="fa-solid fa-box-open" style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
+            <h3>No products found</h3>
+            <p>Try modifying your search or filter criteria.</p>
+            <a href="/products" class="btn btn-outline" style="margin-top: 1rem;">Clear Filters</a>
+        </div>
+        {% else %}
+        <div class="products-grid">
+            {% for p in products %}
+            <div class="product-card">
+                <div class="product-card-img-wrap">
+                    <img src="{{ p.image_url or 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500' }}" alt="{{ p.product_name }}" class="product-card-img">
+                    <span class="product-card-badge">
+                        {% if p.stock > 0 %}
+                            <i class="fa-solid fa-check" style="color:#4ade80;"></i> In Stock ({{ p.stock }})
+                        {% else %}
+                            <i class="fa-solid fa-xmark" style="color:#f87171;"></i> Out of Stock
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="product-card-body">
+                    <div class="product-card-category">{{ p.category }}</div>
+                    <h3 class="product-card-title">{{ p.product_name }}</h3>
+                    
+                    <div class="product-card-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span style="color: var(--gray-600); font-weight: 600; margin-left: 4px;">{{ p.rating or 4.8 }}</span>
+                    </div>
+
+                    <p style="font-size: 0.82rem; color: var(--gray-600); line-height: 1.45; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ p.description or 'Engineered for exceptional performance, durability, and ergonomic convenience.' }}
+                    </p>
+
+                    <div class="product-card-price-row">
+                        <div>
+                            <span class="product-price"><span class="product-price-curr">₹</span>{{ "{:,.2f}".format(p.current_price) }}</span>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="addToCart('{{ p.product_id }}')" style="padding: 0.45rem 0.9rem;">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+
+                    <a href="/product/{{ p.product_id }}" class="btn btn-outline btn-sm" style="margin-top: 0.6rem; text-align: center; justify-content: center; font-size: 0.82rem;">
+                        <i class="fa-solid fa-eye"></i> View Details
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </main>
+
+    <script>
+        async function addToCart(productId) {
+            try {
+                const res = await fetch("/api/cart/add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ product_id: productId, quantity: 1 })
+                }).then(r => r.json());
+
+                if (res.status === "success") {
+                    const badge = document.getElementById("nav-cart-badge");
+                    if (badge) badge.textContent = res.cart_count;
+                    alert("✅ Item added to cart successfully!");
+                } else if (res.redirect) {
+                    window.location.href = res.redirect;
+                } else {
+                    alert("Error: " + (res.message || "Failed to add to cart"));
+                }
+            } catch (err) {
+                console.error("Cart error:", err);
+                alert("Failed to connect to cart service.");
+            }
+        }
+    </script>
+</body>
+</html>

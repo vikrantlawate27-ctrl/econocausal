@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EconoCausal - Dynamic Pricing via Double Machine Learning</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div>
+                <div class="brand-title">EconoCausal</div>
+                <div class="brand-subtitle">Causal AI Pricing</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a href="/" class="nav-link active">
+                    <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
+                    <span>About Project</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+                    <span>Data & Causal Analysis</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-sliders"></i></span>
+                    <span>Pricing Simulator</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div><strong>Tech Stack:</strong></div>
+            <div style="margin-top:0.25rem;">Python, Flask, EconML, Scikit-Learn, SQLite, Chart.js</div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1 class="page-title">EconoCausal: Dynamic Pricing via Double Machine Learning</h1>
+                <p class="page-subtitle">A Causal AI Framework for Profit-Maximizing Dynamic Pricing under Observational Endogeneity</p>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-primary"><i class="fa-solid fa-robot"></i> Double ML</span>
+                <span class="badge badge-secondary"><i class="fa-solid fa-bolt"></i> Real-Time</span>
+                <span class="badge badge-dark"><i class="fa-solid fa-database"></i> SQLite</span>
+            </div>
+        </header>
+
+        <!-- Project Hero Card -->
+        <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff; padding: 2.5rem; margin-bottom: 2rem;">
+            <div style="max-width: 900px;">
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <span class="badge badge-secondary"><i class="fa-solid fa-graduation-cap"></i> CSE AI/ML Project</span>
+                    <span class="badge badge-primary"><i class="fa-solid fa-shield-halved"></i> Role-Based Architecture</span>
+                </div>
+                <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.75rem; color: #fff; letter-spacing: -0.02em;">
+                    EconoCausal: Dynamic Pricing via Double Machine Learning
+                </h2>
+                <p style="font-size: 1.15rem; font-weight: 500; color: #38bdf8; margin-bottom: 1rem;">
+                    AI-powered causal pricing for data-driven business decisions.
+                </p>
+                <p style="font-size: 1rem; line-height: 1.7; color: #cbd5e1; margin-bottom: 2rem;">
+                    Standard supervised machine learning confuses correlation with causation. In historical transaction logs,
+                    retailers charge higher prices during peak holiday seasons and surge demand periods. Naive models mistakenly conclude that
+                    raising prices increases sales, leading to disastrous overpricing. 
+                    <strong>EconoCausal</strong> implements <strong>Double Machine Learning (Chernozhukov et al.)</strong> using 
+                    <strong>EconML</strong> to isolate the true causal price elasticity and optimize product prices for maximum profit.
+                </p>
+
+                <!-- Dedicated Role Access Gateways -->
+                <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-md); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+                        <i class="fa-solid fa-arrow-right-to-bracket" style="color: var(--secondary);"></i> Select Your Access Portal
+                    </div>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="/admin/login" class="btn btn-primary" style="padding: 0.85rem 1.5rem; font-size: 0.95rem;">
+                            <i class="fa-solid fa-user-shield"></i> Admin Login
+                        </a>
+                        <a href="/login" class="btn btn-secondary" style="padding: 0.85rem 1.5rem; font-size: 0.95rem;">
+                            <i class="fa-solid fa-user"></i> Customer Login
+                        </a>
+                        <a href="/register" class="btn btn-outline" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.25); padding: 0.85rem 1.5rem; font-size: 0.95rem;">
+                            <i class="fa-solid fa-user-plus"></i> Customer Sign Up
+                        </a>
+                        <a href="/products" class="btn" style="background: #334155; color: #fff; padding: 0.85rem 1.5rem; font-size: 0.95rem;">
+                            <i class="fa-solid fa-basket-shopping"></i> Browse Store
+                        </a>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; color: #94a3b8;">
+                    <span><i class="fa-solid fa-circle-check" style="color: #4ade80;"></i> Default Admin: admin@econocausal.com</span>
+                    <span><i class="fa-solid fa-circle-check" style="color: #4ade80;"></i> Password: Admin@123</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3-Column Highlights -->
+        <div class="charts-grid-3">
+            <div class="card">
+                <div style="font-size: 2rem; color: var(--danger); margin-bottom: 0.75rem;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <h3 class="card-title">1. The Problem</h3>
+                <p style="font-size: 0.9rem; color: var(--gray-600); line-height: 1.6;">
+                    <strong>Price Endogeneity:</strong> In real-world data, price is not randomly assigned. High competitor prices, 
+                    holiday spikes, and promotions simultaneously drive both price and demand, biasing naive regression models.
+                </p>
+            </div>
+            <div class="card">
+                <div style="font-size: 2rem; color: var(--primary); margin-bottom: 0.75rem;"><i class="fa-solid fa-brain"></i></div>
+                <h3 class="card-title">2. Double Machine Learning</h3>
+                <p style="font-size: 0.9rem; color: var(--gray-600); line-height: 1.6;">
+                    <strong>EconML LinearDML:</strong> Orthogonalizes both demand (outcome Y) and price (treatment T) with respect to 
+                    all market confounders (X), achieving unbiased estimation of the causal price elasticity parameter θ.
+                </p>
+            </div>
+            <div class="card">
+                <div style="font-size: 2rem; color: var(--secondary); margin-bottom: 0.75rem;"><i class="fa-solid fa-coins"></i></div>
+                <h3 class="card-title">3. Dynamic Pricing Engine</h3>
+                <p style="font-size: 0.9rem; color: var(--gray-600); line-height: 1.6;">
+                    <strong>Microeconomic Profit Solver:</strong> Simulates candidate price grids around current catalog prices, 
+                    predicts demand response via causal elasticity, and selects the profit-maximizing dynamic price.
+                </p>
+            </div>
+        </div>
+
+        <!-- Architecture Flow -->
+        <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-diagram-project" style="color: var(--primary); margin-right: 0.5rem;"></i> End-to-End System Architecture</h3>
+            <p class="card-subtitle">Data flow from raw historical transactions to real-time dynamic pricing recommendation</p>
+            
+            <div style="background-color: var(--gray-100); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; font-family: monospace; font-size: 0.92rem; overflow-x: auto;">
+                Historical Sales Data (12,000 Records) 
+                ➔ Data Preprocessing & Feature Engineering 
+                ➔ Baseline Demand Prediction (RandomForest)
+                <br>
+                ➔ <strong>Double Machine Learning (EconML LinearDML)</strong> 
+                ➔ Causal Price Effect (ATE & CI) 
+                ➔ Microeconomic Pricing Engine 
+                ➔ <strong>Recommended Optimal Price</strong>
+            </div>
+        </div>
+
+        <!-- Scientific Methodology Disclaimer -->
+        <div class="alert alert-info">
+            <i class="fa-solid fa-circle-info" style="font-size: 1.25rem; margin-top: 0.1rem;"></i>
+            <div>
+                <strong>Academic / Scientific Methodology Note:</strong><br>
+                This project demonstrates causal estimation methodology using observational/simulated sales data. 
+                It does not claim that synthetic observational data proves a real-world causal relationship, but establishes 
+                the theoretical and practical superiority of Double Machine Learning over naive predictive algorithms.
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

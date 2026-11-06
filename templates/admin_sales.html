@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Intelligence & Transactions - EconoCausal Admin</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Admin Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div>
+                <div class="brand-title">EconoCausal</div>
+                <div class="brand-subtitle">Admin Control Center</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a href="/admin/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/products" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-box-open"></i></span>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link active">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                    <span>Sales</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/orders" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-cart-flatbed"></i></span>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-brain"></i></span>
+                    <span>Demand Prediction</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+                    <span>Data & Causal Analysis</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-sliders"></i></span>
+                    <span>Pricing Simulator</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span>Dynamic Pricing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link active">
+                    <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/profile" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/logout" class="nav-link" style="color: #f87171;">
+                    <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div><strong>Data Source:</strong></div>
+            <div style="color: #4ade80; margin-top:0.25rem;"><i class="fa-solid fa-database"></i> SQLite Sales Log</div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1 class="page-title">Historical Sales & Revenue Reporting</h1>
+                <p class="page-subtitle">Granular transaction logs feeding the Double Machine Learning causal estimation pipeline</p>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-primary"><i class="fa-solid fa-chart-line"></i> 12,000 Records</span>
+                <span class="badge badge-secondary"><i class="fa-solid fa-bolt"></i> Real Project Data</span>
+            </div>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Total Transactions</span>
+                    <div class="kpi-icon" style="color:var(--primary);"><i class="fa-solid fa-receipt"></i></div>
+                </div>
+                <div class="kpi-value">{{ "{:,}".format(summary.total_sales_records or 12000) }}</div>
+                <div class="kpi-subtext">Across catalog portfolio</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Cumulative Revenue</span>
+                    <div class="kpi-icon" style="color:var(--secondary);"><i class="fa-solid fa-coins"></i></div>
+                </div>
+                <div class="kpi-value">₹{{ "{:,.0f}".format(summary.total_revenue or 0) }}</div>
+                <div class="kpi-subtext">Historical transaction turnover</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Cumulative Profit</span>
+                    <div class="kpi-icon" style="color:#0284c7;"><i class="fa-solid fa-chart-pie"></i></div>
+                </div>
+                <div class="kpi-value">₹{{ "{:,.0f}".format(summary.total_profit or 0) }}</div>
+                <div class="kpi-subtext">(Price - Cost) × Quantity</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Average Demand / Day</span>
+                    <div class="kpi-icon" style="color:var(--warning);"><i class="fa-solid fa-box"></i></div>
+                </div>
+                <div class="kpi-value">{{ "{:.1f}".format(summary.avg_demand or 0) }} units</div>
+                <div class="kpi-subtext">Mean transaction volume</div>
+            </div>
+        </div>
+
+        <!-- Sales Data Table -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                <div>
+                    <h3 class="card-title" style="margin-bottom: 0.25rem;">Recent Sales Transactions</h3>
+                    <p class="card-subtitle" style="margin-bottom: 0;">Showing newest observational transaction events</p>
+                </div>
+                <span class="badge badge-dark">Limit: 150 Records Displayed</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Product</th>
+                            <th>Price (₹)</th>
+                            <th>Demand</th>
+                            <th>Competitor Price (₹)</th>
+                            <th>Promotion</th>
+                            <th>Inventory</th>
+                            <th>Gross Revenue (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in sales %}
+                        <tr>
+                            <td style="font-family: monospace; color: var(--gray-600);">{{ s.date }}</td>
+                            <td>
+                                <strong>{{ s.product_name or s.product_id }}</strong>
+                                <span style="font-size: 0.75rem; color: var(--gray-600); margin-left: 4px;">({{ s.product_id }})</span>
+                            </td>
+                            <td style="font-family: monospace; font-weight: 600;">₹{{ "{:,.2f}".format(s.price) }}</td>
+                            <td>
+                                <span class="badge badge-secondary">{{ s.demand }} units</span>
+                            </td>
+                            <td style="font-family: monospace; color: var(--gray-600);">₹{{ "{:,.2f}".format(s.competitor_price) }}</td>
+                            <td>
+                                {% if s.promotion == 1 %}
+                                    <span class="badge badge-primary"><i class="fa-solid fa-tag"></i> Active</span>
+                                {% else %}
+                                    <span style="color: var(--gray-600); font-size: 0.85rem;">None</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ s.inventory }}</td>
+                            <td style="font-family: monospace; font-weight: 700; color: #047857;">
+                                ₹{{ "{:,.2f}".format(s.revenue) }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

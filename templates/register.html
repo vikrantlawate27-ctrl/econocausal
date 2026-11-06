@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Sign Up - EconoCausal</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="background: radial-gradient(circle at top right, #1e293b, #0f172a 80%); min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 1.5rem;">
+
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-header-icon" style="background: linear-gradient(135deg, var(--secondary), var(--accent));">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h2>Create an Account</h2>
+            <p>Join EconoCausal for intelligent smart shopping</p>
+        </div>
+
+        <div class="auth-body">
+            {% if error %}
+            <div class="alert alert-warning" style="background: #fee2e2; border-left: 4px solid var(--danger); color: #991b1b; padding: 0.75rem 1rem; margin-bottom: 1.25rem;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>{{ error }}</div>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/register">
+                <div class="form-group" style="margin-bottom: 1.15rem;">
+                    <label class="form-label" for="name"><i class="fa-solid fa-user"></i> Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Vikrant Lawate" required autofocus>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.15rem;">
+                    <label class="form-label" for="email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="user@example.com" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.15rem;">
+                    <label class="form-label" for="password"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="At least 6 characters" required minlength="6">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label" for="confirm_password"><i class="fa-solid fa-shield-check"></i> Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Confirm your password" required minlength="6">
+                </div>
+
+                <button type="submit" class="btn btn-secondary" style="width: 100%; padding: 0.85rem; font-size: 1rem; justify-content: center;">
+                    <i class="fa-solid fa-check"></i> Create Account
+                </button>
+            </form>
+        </div>
+
+        <div class="auth-footer">
+            Already have an account? <a href="/login">Sign in</a>
+        </div>
+    </div>
+
+</body>
+</html>

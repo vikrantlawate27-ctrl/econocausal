@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data & Causal Analysis - EconoCausal</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div>
+                <div class="brand-title">EconoCausal</div>
+                <div class="brand-subtitle">Causal AI Pricing</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a href="/admin/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/products" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-box-open"></i></span>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                    <span>Sales</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/orders" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-cart-flatbed"></i></span>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-brain"></i></span>
+                    <span>Demand Prediction</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link active">
+                    <span class="nav-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+                    <span>Data & Causal Analysis</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-sliders"></i></span>
+                    <span>Pricing Simulator</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/simulator" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span>Dynamic Pricing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/analysis" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/sales" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/profile" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/logout" class="nav-link" style="color: #f87171;">
+                    <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1 class="page-title">Exploratory & Causal Data Analysis</h1>
+                <p class="page-subtitle">Disentangling observational correlation from true structural price elasticity</p>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-primary"><i class="fa-solid fa-calculator"></i> Neyman Orthogonality</span>
+                <span class="badge badge-secondary"><i class="fa-solid fa-check"></i> Cross-Fitting</span>
+            </div>
+        </header>
+
+        <!-- Causal Identification Framework Card -->
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <h3 class="card-title"><i class="fa-solid fa-project-diagram" style="color:var(--primary); margin-right:0.5rem;"></i> Double Machine Learning Identification Framework</h3>
+            <p class="card-subtitle">Formulation of Treatment, Outcome, and Confounding Variables</p>
+
+            <div class="charts-grid-3" style="margin-bottom: 1.25rem;">
+                <div style="background-color: var(--gray-50); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--gray-200);">
+                    <div style="font-weight: 700; color: var(--primary); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 0.35rem;">
+                        <i class="fa-solid fa-tag"></i> Treatment Variable (T)
+                    </div>
+                    <div style="font-size: 1.2rem; font-weight: 800; color: var(--dark);">Price (Offered ₹)</div>
+                    <p style="font-size: 0.82rem; color: var(--gray-600); margin-top: 0.4rem;">
+                        The decision variable manipulated by the business. In observational history, price is endogenous.
+                    </p>
+                </div>
+
+                <div style="background-color: var(--gray-50); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--gray-200);">
+                    <div style="font-weight: 700; color: var(--secondary); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 0.35rem;">
+                        <i class="fa-solid fa-cart-shopping"></i> Outcome Variable (Y)
+                    </div>
+                    <div style="font-size: 1.2rem; font-weight: 800; color: var(--dark);">Demand (Units Sold)</div>
+                    <p style="font-size: 0.82rem; color: var(--gray-600); margin-top: 0.4rem;">
+                        The customer purchase response. Governed by downward-sloping microeconomic utility.
+                    </p>
+                </div>
+
+                <div style="background-color: var(--gray-50); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--gray-200);">
+                    <div style="font-weight: 700; color: var(--accent); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 0.35rem;">
+                        <i class="fa-solid fa-network-wired"></i> Confounders (X / W)
+                    </div>
+                    <div style="font-size: 1.2rem; font-weight: 800; color: var(--dark);">Market Shifters</div>
+                    <p style="font-size: 0.82rem; color: var(--gray-600); margin-top: 0.4rem;">
+                        Competitor price, promotions, holidays, inventory, temperature, month, season, category.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Causal Metric Readout -->
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap; background-color: #eff6ff; padding: 1.25rem; border-radius: var(--radius-sm); align-items: center;">
+                <div>
+                    <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #1e40af;">Estimated Average Treatment Effect (ATE):</span>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #1e3a8a;" id="causal-ate-val">--</div>
+                </div>
+                <div>
+                    <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #1e40af;">95% Asymptotic Confidence Interval:</span>
+                    <div style="font-size: 1.4rem; font-weight: 700; color: #1e3a8a;" id="causal-ci-val">--</div>
+                </div>
+                <div style="flex: 1; min-width: 250px; font-size: 0.88rem; color: #1e40af;">
+                    <strong>Methodological Interpretation:</strong><br>
+                    <span id="causal-interp-val">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6 EDA Charts Grid -->
+        <div class="charts-grid-2">
+            <!-- 1. Price vs Revenue & Profit -->
+            <div class="card">
+                <h3 class="card-title">1. Price vs Revenue & Gross Profit</h3>
+                <p class="card-subtitle">Illustrates parabolic profit surface: low prices erode margin; high prices destroy demand</p>
+                <div class="chart-container">
+                    <canvas id="chart-price-revenue-profit"></canvas>
+                </div>
+            </div>
+
+            <!-- 2. Competitor Price vs Demand -->
+            <div class="card">
+                <h3 class="card-title">2. Competitor Price vs Demand (Cross-Price Elasticity)</h3>
+                <p class="card-subtitle">When competitors increase prices, our relative attractiveness and demand increase</p>
+                <div class="chart-container">
+                    <canvas id="chart-competitor-demand"></canvas>
+                </div>
+            </div>
+
+            <!-- 3. Promotion vs Demand -->
+            <div class="card">
+                <h3 class="card-title">3. Promotion Campaign vs Demand</h3>
+                <p class="card-subtitle">Active marketing campaigns shift baseline consumer willingness-to-pay upwards</p>
+                <div class="chart-container">
+                    <canvas id="chart-promo-demand"></canvas>
+                </div>
+            </div>
+
+            <!-- 4. Seasonal Demand -->
+            <div class="card">
+                <h3 class="card-title">4. Seasonal Demand Variation</h3>
+                <p class="card-subtitle">Demand distribution across Spring, Summer, Autumn, and Winter cycles</p>
+                <div class="chart-container">
+                    <canvas id="chart-season-demand"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory vs Demand -->
+        <div class="card">
+            <h3 class="card-title">5. Inventory Level vs Demand</h3>
+            <p class="card-subtitle">Stock availability controls and fulfillment friction under varying inventory levels</p>
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="chart-inventory-demand"></canvas>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
